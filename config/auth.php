@@ -54,12 +54,17 @@ return [
             'provider' => 'siswa',
         ],
 
-        // 'siswa-api' => [
-        //     'driver' => 'passport',
-        //     'provider' => 'siswa',
-        // ],
+        'siswa-api' => [
+            'driver' => 'passport',
+            'provider' => 'siswa',
+        ],
 
         'admin' => [
+            'driver' => 'session',
+            'provider' => 'admin'
+        ],
+        
+        'admin-api' => [
             'driver' => 'passport',
             'provider' => 'admin'
         ],
@@ -69,10 +74,10 @@ return [
             'provider' => 'petugas'
         ],
 
-        // 'petugas-api' => [
-        //     'driver' => 'passport',
-        //     'provider' => 'admin',
-        // ],
+        'petugas-api' => [
+            'driver' => 'passport',
+            'provider' => 'admin',
+        ],
     ],
 
     /*

@@ -13,6 +13,13 @@ class PembayaranController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+
+    //  public function __construct()
+    // {
+    //     $this->middleware('auth:siswa-api', ['except' => ['laporan']]);
+    // }
+
     public function index()
     {
         $pembayaran = Pembayaran::with('Siswa', 'Petugas', 'SPP')->get();
@@ -111,11 +118,18 @@ class PembayaranController extends Controller
 
     public function laporan(Request $request)
     {
-        $topup = Topup::where('id', $request->topup)->first();
-        $student = Student::find($topup->student_id);
-        // return view('financeAdmin.cashout.invoice', compact('topup', 'student')); //buat ngeliat preview
-        $pdf = PDF::loadView('laporan', compact('topup', 'student'));
-        return $pdf->stream("Invoice Quki.pdf");
-        // return $pdf->stream("invoice cashout quki.pdf");   
+        $pembayaran = Pembayaran::where('id_pembayaran', $request->id_pembayaran)->with('petugas', 'spp', 'siswa')->first();
+        return response()->json([
+            'status' => 1,
+            'message' => 'Berhasil Generate Invoice Payment',
+            'data' => $pembayaran
+        ]);
+        // $pembayaran = Pembayaran::where('id_pembayaran', $request->id_pembayaran)->first();
+        // $siswa = Student::find($pembayaran->nisn)->first();
+        // // return view('financeAdmin.cashout.invoice', compact('topup', 'student')); //buat ngeliat preview
+        // // $pdf = PDF::loadView('laporan', compact('pembayaran', 'siswa'));
+        // $pdf = PDF::loadView('laporan');
+        // return $pdf->download("Invoice Pembayaran.pdf");
+        // // return $pdf->stream("invoice cashout quki.pdf");   
     }
 }

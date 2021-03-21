@@ -31,6 +31,7 @@ Route::resource('kelas', KelasController::class); // KELAS
 Route::resource('spp', SPPController::class); // SPP
 Route::resource('petugas', PetugasController::class); // PETUGAS
 Route::resource('siswa', SiswaController::class); // SISWA
-Route::get('pembayaran-siswa', 'PembayaranController@getPembayaranSiswa')->middleware('auth:siswa-api'); // PEMBAYARAN
-Route::get('pembayaran-siswa/{id}', 'PembayaranController@getDetailPembayaranSiswa')->middleware('auth:siswa-api'); // PEMBAYARAN
+Route::get('pembayaran-siswa', 'PembayaranController@getPembayaranSiswa')->middleware('auth:siswa-api', ['except' => ['laporan']]); // PEMBAYARAN
+Route::get('pembayaran-siswa/{id}', 'PembayaranController@getDetailPembayaranSiswa')->middleware('auth:siswa-api', ['except' => ['laporan']]); // PEMBAYARAN BY ID
+Route::get('invoice/{id_pembayaran}', 'PembayaranController@laporan'); // LAPORAN
 Route::resource('pembayaran', PembayaranController::class); // PEMBAYARAN
