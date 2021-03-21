@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Pembayaran;
 use Illuminate\Http\Request;
 use Auth;
+use App\Kelas;
 
 class PembayaranController extends Controller
 {
@@ -119,6 +120,10 @@ class PembayaranController extends Controller
     public function laporan(Request $request)
     {
         $pembayaran = Pembayaran::where('id_pembayaran', $request->id_pembayaran)->with('petugas', 'spp', 'siswa')->first();
+        $kelas = Kelas::where('id_kelas', $pembayaran->siswa->id_kelas)->first();
+        if ($kelas) {
+            $pembayaran['kelas'] = $kelas;
+        }
         return response()->json([
             'status' => 1,
             'message' => 'Berhasil Generate Invoice Payment',
