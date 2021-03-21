@@ -40,11 +40,21 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-
+        
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
             // 'hash' => false,
+        ],
+        
+        'siswa' => [
+            'driver' => 'session',
+            'provider' => 'siswas',
+        ],
+
+        'siswa-api' => [
+            'driver' => 'passport',
+            'provider' => 'siswas',
         ],
     ],
 
@@ -75,6 +85,11 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        'siswas' => [
+            'driver' => 'eloquent',
+            'model' => App\Siswa::class,
+        ],
     ],
 
     /*

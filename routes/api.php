@@ -18,8 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
 Route::post('petugas/register', 'AuthController@registerPetugas');
-Route::post('/siswa', 'AuthController@registerSiswa');
-Route::post('/login', 'AuthController@login');
+Route::post('siswa/register', 'AuthController@registerSiswa');
+Route::post('petugas/login', 'AuthController@login');
+Route::post('siswa/login', 'AuthController@loginSiswa');
 Route::get('/user', 'AuthController@user');
 
