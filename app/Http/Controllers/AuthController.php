@@ -26,7 +26,7 @@ class AuthController extends Controller
             'role' => 'petugas',
             'password' => bcrypt($request->password),
         ]); 
-        return new UserResource($user); 
+        return new UserResource($user);  
     }
     
     public function registerSiswa(Request $request){
