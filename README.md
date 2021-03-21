@@ -77,3 +77,4 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 "# laravel_multi_login_register" 
+"# laravel_login_register_with_passport" 
