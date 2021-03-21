@@ -3,21 +3,31 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-// use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Passport\HasApiTokens;
 
 // class Siswa extends Authenticatable implements JWTSubject
 class Siswa extends Authenticatable 
 {
     use Notifiable, HasApiTokens;
-    // protected $table = 'siswa';
 
-    protected $fillable = [
-        'name', 'username', 'role', 'password', 
-    ];
+    protected $fillable = [ 'nis', 'nama', 'id_kelas', 'alamat', 'password', 'no_telp', 'id_spp'];
+    protected $primaryKey = 'nisn';
+    protected $table = 'siswa';
+
+    
+    public function Pembayaran() {
+        return $this->hasMany('App\Pembayaran', 'id_pembayaran');
+    }
+    
+    public function Kelas() {
+        return $this->belongsTo('App\Kelas', 'id_kelas');
+    }
+    
+    public function SPP() {
+        return $this->belongsTo('App\Spp', 'id_spp');
+    }
 
     /**
      * The attributes that should be hidden for arrays.
@@ -37,12 +47,4 @@ class Siswa extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // public function getJWTIdentifier()
-    // {
-    //     return $this->getKey();
-    // }
-    // public function getJWTCustomClaims()
-    // {
-    //     return [];
-    // }
 }

@@ -15,6 +15,7 @@
         "laravel/framework": "^7.0",
         "laravel/passport": "7.5.1",
         "laravel/tinker": "^2.0",
+        "laravel/ui": "2.4",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {

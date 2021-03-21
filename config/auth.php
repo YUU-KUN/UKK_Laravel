@@ -1,4 +1,6 @@
 <?php
+use App\Petugas;
+use App\Siswa;
 
 return [
 
@@ -38,7 +40,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'siswa',
         ],
         
         'api' => [
@@ -49,13 +51,28 @@ return [
         
         'siswa' => [
             'driver' => 'session',
-            'provider' => 'siswas',
+            'provider' => 'siswa',
         ],
 
-        'siswa-api' => [
+        // 'siswa-api' => [
+        //     'driver' => 'passport',
+        //     'provider' => 'siswa',
+        // ],
+
+        'admin' => [
             'driver' => 'passport',
-            'provider' => 'siswas',
+            'provider' => 'admin'
         ],
+
+        'petugas' => [
+            'driver' => 'session',
+            'provider' => 'petugas'
+        ],
+
+        // 'petugas-api' => [
+        //     'driver' => 'passport',
+        //     'provider' => 'admin',
+        // ],
     ],
 
     /*
@@ -86,9 +103,19 @@ return [
         //     'table' => 'users',
         // ],
 
-        'siswas' => [
+        'siswa' => [
             'driver' => 'eloquent',
-            'model' => App\Siswa::class,
+            'model' => Siswa::class,
+        ],
+
+        'admin' => [
+            'driver' => 'eloquent',
+            'model' => Petugas::class,
+        ],
+
+        'petugas' => [
+            'driver' => 'eloquent',
+            'model' => Petugas::class,
         ],
     ],
 
