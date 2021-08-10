@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\ValidateUserRegistration;
 use App\Http\Requests\ValidateUserLogin;
-use App\User;
+
+use App\Http\Requests\ValidateAdminRegister;
+use App\Http\Requests\ValidateAdminLogin;
 use App\Siswa;
 use App\Petugas;
 
 use Auth; 
 use Hash; 
+// use Validator;
 
 class AuthController extends Controller
 {
@@ -19,22 +22,22 @@ class AuthController extends Controller
     //     $this->middleware('auth:api', ['except' => ['login', 'loginsiswa', 'registerPetugas', 'registerSiswa', ]]);
     // }
 
-    public function registerPetugas(Request $request){
-        $petugas = Petugas::create([
-            'username' => $request->username,
-            'password' => $request->password,
-            // 'password' => Hash::make($request->password),
-            'nama_petugas' => $request->nama_petugas,
-            'level' => 'petugas',
-            // 'password' => bcrypt($request->password),
-        ]); 
+    public function registerPetugas(ValidateAdminRegister $request){
+        // Validator::validate($request->all(), [
+        //     'username' => ['required', 'unique:petugas'],
+        //     'password' => 'required | min:6',
+        //     'nama_petugas' => 'required',
+        // ])->validate();
+        $input = $request->all();
+        $input['password'] = bcrypt($request->password);
+        $input['level'] = 'admin';
+        $petugas = Petugas::create($input); 
         if ($petugas) {
             return response()->json([
                 'status' => 1,
                 'message' => 'Berhasil Mendaftarkan Petugas',
                 'petugas' => $petugas
             ]);
-            # code...
         } else {
             return response()->json([
                 'status' => 0,
@@ -86,17 +89,31 @@ class AuthController extends Controller
     // }
 
     public function loginSiswa(Request $request){
-        // $credentials = request(['nama', 'password']);
-        // if (Auth::guard('siswa')->attempt($credentials)) {
-        //     $siswa = Auth::guard('siswa')->user();
-        //     $token = $siswa->createToken('MyApp')->accessToken;
-        //     return response()->json([
-        //         'type' =>'success',
-        //         'message' => 'Logged in.', 
-        //         'token' => $token,
-        //         'user' => $siswa,
-        //     ]);
-        // }
+        $credentials = request(['nama', 'password']);
+        if (Auth::guard('siswa')->attempt($credentials)) {
+            $siswa = Auth::guard('siswa')->user();
+            $token = $siswa->createToken('MyApp')->accessToken;
+            return response()->json([
+                'type' =>'success',
+                'message' => 'Selamat Datang, ', 
+                'token' => $token,
+                'siswa' => $siswa,
+            ]);
+        }
+    }
+
+    public function loginPetugas(ValidateAdminLogin $request){
+        $credentials = request(['username', 'password']);
+        if (Auth::guard('admin')->attempt($credentials)) {
+            $admin = Auth::guard('admin')->user();
+            $token = $admin->createToken('MyApp')->accessToken;
+            return response()->json([
+                'status' => 1,
+                'message' => 'Selamat Datang, '. $admin->nama_petugas, 
+                'token' => $token,
+                'user' => $admin,
+            ]);
+        }
 
         // if ($token = auth('web')->attempt($credentials)) {
         //     $siswa = auth('web')->user();
@@ -105,21 +122,20 @@ class AuthController extends Controller
         //         'type' =>'success',
         //         'message' => 'Logged in.', 
         //         'token' => $token,
-        //         'user' => $siswa,
+        //         'siswa' => $siswa,
         //     ]);
         // }
 
-        $siswa = Siswa::where('nama', $request->nama)->first();
-        // return $siswa;
+        // $siswa = Siswa::where('nama', $request->nama)->first();
 
-        if (Hash::check(request()->password, $siswa->password)) {
-            return response()->json([
-                'type' =>'success',
-                'message' => 'Logged in.', 
-                'token' => $siswa->createToken('MyApp')->accessToken,
-                'siswa' => $siswa,
-            ]);
-        }
+        // if (Hash::check(request()->password, $siswa->password)) {
+        //     return response()->json([
+        //         'type' =>'success',
+        //         'message' => 'Logged in.', 
+        //         'token' => $siswa->createToken('MyApp')->accessToken,
+        //         'siswa' => $siswa,
+        //     ]);
+        // }
        
 
             return response()->json([
@@ -128,13 +144,22 @@ class AuthController extends Controller
             ]);
     }
 
-    public function loginPetugas(Request $request){
+    public function loginPetugasAwal(Request $request){
+        // $validatedData = Validator::make($request->all(), [
+        //     'username' => 'required',
+        //     'password' => 'required',
+        // ])->validate();
+        
+        // if ($validatedData->fails()) {
+        //     return $validatedData->errors();
+        // }
+
         // $credentials = request(['username', 'password']);
         $petugas = Petugas::where('username', $request->username)->where('password', $request->password)->first();
-        // return $petugas;
+        // return $credentials;
 
         if ($token = Auth::login($petugas)) {
-        // if (Auth::guard('petugas')->attempt($credentials)) {
+        // if (Auth::guard('admin-api')->attempt($credentials)) {
         // if (Hash::check(request()->password, $petugas->password)) {
             // $petugas = Auth::guard('petugas')->user();
             // $token = $petugas->createToken('MyApp');
@@ -151,6 +176,14 @@ class AuthController extends Controller
             'status' => 0,
             'message' => 'Incorrect Username or Password.', 
         ]);
+    }
+
+    public function getAkunAdmin(Request $request) {
+        return $request->user();
+    }
+
+    public function getAkunSiswa(Request $request) {
+        return $request->user();
     }
 
 }

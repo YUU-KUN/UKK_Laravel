@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Petugas;
 use Illuminate\Http\Request;
 use Hash;
-// use Auth;
+use Auth;
 
 class PetugasController extends Controller
 {
@@ -44,11 +44,12 @@ class PetugasController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->all();
-        $input['password'] = Hash::make($request->input('password'));
-        $petugas = Petugas::create($input);
-
-        return $petugas;
+        if (Auth::user()->level == 'admin') {
+            $input = $request->all();
+            $input['password'] = $request->password;
+            $petugas = Petugas::create($input);
+            return $petugas;
+        }
     }
 
     /**
@@ -59,8 +60,10 @@ class PetugasController extends Controller
      */
     public function show($id)
     {
-        $petugas = Petugas::with('Pembayaran')->find($id);
-        return $petugas;
+        if (Auth::user()->level == 'admin') {
+            $petugas = Petugas::with('Pembayaran')->find($id);
+            return $petugas;
+        }
     }
 
     /**
@@ -83,10 +86,13 @@ class PetugasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $petugas = Petugas::find($id);
-        $petugas->update($request->all());
-
-        return $petugas;
+        if (Auth::user()->level == 'admin') {
+            $petugas = Petugas::find($id);
+            $input = $request->all();
+            $input['password'] = $petugas->password;
+            $petugas->update($input);
+            return $petugas;
+        }
     }
 
     /**
@@ -97,8 +103,10 @@ class PetugasController extends Controller
      */
     public function destroy($id)
     {
-        $petugas = Petugas::find($id);
-        $petugas->delete();
-        return 'Data Petugas Berhasil Dihapus';
+        if (Auth::user()->level == 'admin') {
+            $petugas = Petugas::find($id);
+            $petugas->delete();
+            return 'Data Petugas Berhasil Dihapus';
+        }
     }
 }

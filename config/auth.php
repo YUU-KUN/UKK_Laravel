@@ -63,8 +63,9 @@ return [
             'driver' => 'session',
             'provider' => 'admin'
         ],
-        
+
         'admin-api' => [
+            // 'driver' => 'jwt',
             'driver' => 'passport',
             'provider' => 'admin'
         ],

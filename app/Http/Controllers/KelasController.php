@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Kelas;
 use Illuminate\Http\Request;
+use Auth;
 
 class KelasController extends Controller
 {
@@ -12,6 +13,7 @@ class KelasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    
     public function index()
     {
         $kelas = Kelas::get();
@@ -41,26 +43,35 @@ class KelasController extends Controller
      */
     public function store(Request $request)
     {
-        $kelas = new Kelas([
-            'nama_kelas' => $request->nama_kelas,
-            'kompetensi_keahlian' => $request->kompetensi_keahlian,
-        ]);
-        // $input = $request->all();
-        // $kelas = Kelas::create($input);
-        $kelas->save();
+        if (Auth::user()->level == 'admin') {
 
-        if ($kelas) {
-            return response()->json([
-                'status' => 200,
-                'message' => 'Sukses Menambahkan data kelas baru',
-                'data' => $kelas
+            $kelas = new Kelas([
+                'nama_kelas' => $request->nama_kelas,
+                'kompetensi_keahlian' => $request->kompetensi_keahlian,
             ]);
+            // $input = $request->all();
+            // $kelas = Kelas::create($input);
+            $kelas->save();
+
+            if ($kelas) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Sukses Menambahkan data kelas baru',
+                    'data' => $kelas
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Terdapat Kesalahan',
+                ]);
+            }
         } else {
             return response()->json([
-                'status' => 400,
-                'message' => 'Terdapat Kesalahan',
+                'status' => 403,
+                'message' => 'Unauthorized',
             ]);
         }
+
     }
 
     /**
@@ -71,18 +82,25 @@ class KelasController extends Controller
      */
     public function show($id)
     {
-        $kelas = Kelas::find($id);
-        
-        if ($kelas) {
-            return response()->json([
-                'status' => 200,
-                'message' => 'Sukses Mendapatkan data kelas',
-                'data' => $kelas
-            ]);
+        if (Auth::user()->level  == 'admin') {
+            $kelas = Kelas::find($id);
+            
+            if ($kelas) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Sukses Mendapatkan data kelas',
+                    'data' => $kelas
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Kelas Tidak Tersedia',
+                ]);
+            }
         } else {
             return response()->json([
-                'status' => 400,
-                'message' => 'Kelas Tidak Tersedia',
+                'status' => 403,
+                'message' => 'Unauthorized',
             ]);
         }
     }
@@ -107,24 +125,31 @@ class KelasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $kelas = Kelas::find($id);
-        $input['nama_kelas'] = $request->input('nama_kelas');
-        $input['kompetensi_keahlian'] = $request->input('kompetensi_keahlian');
-        $kelas->update($input);
-		$kelas->save();
-
-        if ($kelas) {
-            return response()->json([
-                'status' => 200,
-                // 'message' => 'Sukses mengupdate data kelas',
-                'message' => 'Sukses mengupdate data kelas dengan id '.$id,
-                'data' => $kelas,
-            ]);
+        if (Auth::user()->level == 'admin') {
+            $kelas = Kelas::find($id);
+            $input['nama_kelas'] = $request->input('nama_kelas');
+            $input['kompetensi_keahlian'] = $request->input('kompetensi_keahlian');
+            $kelas->update($input);
+            $kelas->save();
+    
+            if ($kelas) {
+                return response()->json([
+                    'status' => 200,
+                    // 'message' => 'Sukses mengupdate data kelas',
+                    'message' => 'Sukses mengupdate data kelas dengan id '.$id,
+                    'data' => $kelas,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 400,
+                    // 'message' => 'Gagal mengupdate data kelas',
+                    'message' => 'Gagal mengupdate data kelas dengan id '.$id,
+                ]);
+            }    
         } else {
             return response()->json([
-                'status' => 400,
-                // 'message' => 'Gagal mengupdate data kelas',
-                'message' => 'Gagal mengupdate data kelas dengan id '.$id,
+                'status' => 403,
+                'message' => 'Unauthorized',
             ]);
         }
     }
@@ -137,13 +162,20 @@ class KelasController extends Controller
      */
     public function destroy($id)
     {
-        $kelas = Kelas::find($id);
-        $kelas->delete();
+        if (Auth::user()->level == 'admin') {
+            $kelas = Kelas::find($id);
+            $kelas->delete();
 
-        return response()->json([
-            'status' => 200,
-            // 'message' => 'Sukses mengupdate data kelas',
-            'message' => 'Sukses menghapus data kelas dengan id '.$id
-        ]);
+            return response()->json([
+                'status' => 200,
+                // 'message' => 'Sukses mengupdate data kelas',
+                'message' => 'Sukses menghapus data kelas dengan id '.$id
+            ]);
+        } else {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Unauthorized',
+            ]);
+        }
     }
 }

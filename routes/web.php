@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+// // GOOGLE
+Route::get('sign-in/google', 'SocialController@google');
+Route::get('sign-in/google/redirect', 'SocialController@googleRedirect');
+
+// // GITHUB
+Route::get('sign-in/github', 'SocialController@github');
+// Route::get('sign-in/github/redirect', 'SocialController@githubRedirect');

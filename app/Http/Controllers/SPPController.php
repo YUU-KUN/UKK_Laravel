@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\SPP;
 use Illuminate\Http\Request;
-
+use Auth;
 class SPPController extends Controller
 {
     /**
@@ -36,23 +36,26 @@ class SPPController extends Controller
      */
     public function store(Request $request)
     {
-        $spp = SPP::create($request->all());
-
-        return $spp;
+        if (Auth::user()->level == 'admin') {
+            $spp = SPP::create($request->all());
+            return $spp;
+        }
         
-        /**
-         * Display the specified resource.
-         *
-         * @param  int  $id
-         * @return \Illuminate\Http\Response
-         */
     }
+
+    /**
+    * Display the specified resource.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\Response
+    */
     
     public function show($id)
     {
-        $spp = SPP::find($id);
-    
-        return $spp;
+        if (Auth::user()->level == 'admin') {
+            $spp = SPP::find($id);
+            return $spp;
+        }
     }
         
     /**
@@ -75,10 +78,11 @@ class SPPController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $spp = SPP::find($id);
-        $spp->update($request->all());
-
-        return $spp;
+        if (Auth::user()->level == 'admin') {
+            $spp = SPP::find($id);
+            $spp->update($request->all());
+            return $spp;
+        }
     }
 
     /**
@@ -89,9 +93,10 @@ class SPPController extends Controller
      */
     public function destroy($id)
     {
-        $spp = SPP::find($id);
-        $spp->delete();
-
-        return 'Berhasil Menghapus SPP';
+        if (Auth::user()->level == 'admin') {
+            $spp = SPP::find($id);
+            $spp->delete();
+            return 'Berhasil Menghapus SPP';
+        }
     }
 }

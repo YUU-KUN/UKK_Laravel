@@ -16,8 +16,8 @@ class SPP extends Model
     }
 
     public function SPP() {
-        return $this->hasOne('App\Spp', 'id_spp');
-        // return $this->hasMany('App\Siswa', 'nisn');
+        // return $this->hasOne('App\Spp', 'id_spp');
+        return $this->hasMany('App\Spp', 'id_spp');
     }
 
     public function Pembayaran() {

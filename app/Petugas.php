@@ -3,19 +3,20 @@
 namespace App;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Passport\HasApiTokens;
 
 class Petugas extends Authenticatable implements JWTSubject
+// class Petugas extends Authenticatable
 {
     use Notifiable, HasApiTokens;
 
     protected $primaryKey = 'id_petugas';
     protected $table = 'petugas';
-    protected $fillable = ['username', 'password', 'nama_petugas', 'level'];
+    protected $fillable = ['username', 'password', 'nama_petugas', 'level', 'google_id', 'github_id'];
 
     protected $hidden = [
         'password', 'remember_token',

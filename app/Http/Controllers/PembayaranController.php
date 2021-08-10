@@ -18,7 +18,8 @@ class PembayaranController extends Controller
 
     //  public function __construct()
     // {
-    //     $this->middleware('auth:siswa-api', ['except' => ['laporan']]);
+    //     $this->middleware('auth:admin-api', ['except' => ['laporan', 'getPembayaranSiswa']]);
+    //     $this->middleware('auth:petugas-api', ['except' => ['laporan', 'getPembayaranSiswa']]);
     // }
 
     public function index()
@@ -45,7 +46,9 @@ class PembayaranController extends Controller
      */
     public function store(Request $request)
     {
-        $pembayaran = Pembayaran::create($request->all());
+        $input = $request->all();
+        $input['id_petugas'] = Auth::user()->id_petugas;
+        $pembayaran = Pembayaran::create($input);
         return $pembayaran;
     }
 
@@ -82,7 +85,12 @@ class PembayaranController extends Controller
     public function update(Request $request, $id)
     {
         $pembayaran = Pembayaran::find($id);
-        $pembayaran->update($request->all());
+        $input = $request->all();
+        $request->tgl_bayar ? $input['tgl_bayar'] = $request->tgl_bayar : $input['tgl_bayar'] = $pembayaran->tgl_bayar;
+        $request->bulan_dibayar ? $input['bulan_dibayar'] = $request->bulan_dibayar : $input['bulan_dibayar'] = $pembayaran->bulan_dibayar;
+        $request->tgl_bayar ? $input['tgl_bayar'] = $request->tgl_bayar : $input['tgl_bayar'] = $pembayaran->tgl_bayar;
+        $request->tahun_dibayar ? $input['tahun_dibayar'] = $request->tahun_dibayar : $input['tahun_dibayar'] = $pembayaran->tahun_dibayar;
+        $pembayaran->update($input);
         return $pembayaran;
     }
 
@@ -118,7 +126,7 @@ class PembayaranController extends Controller
     }
 
     public function laporan(Request $request)
-    {
+    {   
         $pembayaran = Pembayaran::where('id_pembayaran', $request->id_pembayaran)->with('petugas', 'spp', 'siswa')->first();
         $kelas = Kelas::where('id_kelas', $pembayaran->siswa->id_kelas)->first();
         if ($kelas) {
@@ -129,12 +137,5 @@ class PembayaranController extends Controller
             'message' => 'Berhasil Generate Invoice Payment',
             'data' => $pembayaran
         ]);
-        // $pembayaran = Pembayaran::where('id_pembayaran', $request->id_pembayaran)->first();
-        // $siswa = Student::find($pembayaran->nisn)->first();
-        // // return view('financeAdmin.cashout.invoice', compact('topup', 'student')); //buat ngeliat preview
-        // // $pdf = PDF::loadView('laporan', compact('pembayaran', 'siswa'));
-        // $pdf = PDF::loadView('laporan');
-        // return $pdf->download("Invoice Pembayaran.pdf");
-        // // return $pdf->stream("invoice cashout quki.pdf");   
     }
 }

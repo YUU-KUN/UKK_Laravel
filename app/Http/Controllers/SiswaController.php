@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Siswa;
+use Auth;
 
 class SiswaController extends Controller
 {
@@ -12,8 +13,13 @@ class SiswaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:admin-api, petugas-api');
+    // }
+
     public function index()
-    {
+    {      
         $siswa = Siswa::with('Kelas')->get();
         // return $siswa->successResponse($siswa, 'Berhasil Mendapatkan data Siswa');
         return response()->json([
@@ -41,11 +47,13 @@ class SiswaController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->all(); 
-        $siswa = Siswa::create($input);
-        $siswa->save();
-
-        return $siswa;
+        if (Auth::user()->level == 'admin') {
+            $input = $request->all(); 
+            $input['password'] = bcrypt($request->password);
+            $siswa = Siswa::create($input);
+            $siswa->save();
+            return $siswa;
+        }
     }
 
     /**
@@ -56,8 +64,10 @@ class SiswaController extends Controller
      */
     public function show($id)
     {
-        $siswa = Siswa::with('Kelas')->find($id);
-        return $siswa;
+        if (Auth::user()->level == 'admin') {
+            $siswa = Siswa::with('Kelas')->find($id);
+            return $siswa;
+        }
     }
 
     /**
@@ -80,11 +90,12 @@ class SiswaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $input = $request->all();
-        $siswa = Siswa::find($id);
-        $siswa->update($input);
-        
-        return $siswa;
+        if (Auth::user()->level == 'admin') {
+            $input = $request->all();
+            $siswa = Siswa::find($id);
+            $siswa->update($input);
+            return $siswa;
+        }
     }
 
     /**
@@ -95,10 +106,12 @@ class SiswaController extends Controller
      */
     public function destroy($id)
     {
-        $siswa = Siswa::find($id);
-        // $siswa->Pembayaran->delete();
-        $siswa->Spp->delete();
-        $siswa->delete();
-        return 'Berhasil Menghapus data Siswa';
+        if (Auth::user()->level == 'admin') {
+            $siswa = Siswa::find($id)->delete();
+            // $siswa->pembayaran()->delete();
+            // $siswa->Spp->delete();
+            // $siswa->each->delete();
+            return 'Berhasil Menghapus data Siswa';
+        }
     }
 }
